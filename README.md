@@ -25,7 +25,7 @@ icmdoutput/ <br>
 1. Clone this repository:
 
    ```bash
-   git clone https://github.com/PowerPelikan/icmd_json_imports.git
+   git clone https://github.com/PowerPelikan/questek_icmd_python.git
    cd icmdoutput
    ```
 
