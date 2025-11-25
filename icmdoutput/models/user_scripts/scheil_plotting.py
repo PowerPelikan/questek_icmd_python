@@ -2,6 +2,7 @@
 
 import pandas as pd
 import plotly.express as px
+import numpy as np
 from icmdoutput.models.solidification import Solidification
 
 
