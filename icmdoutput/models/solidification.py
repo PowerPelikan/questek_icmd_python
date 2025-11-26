@@ -39,13 +39,10 @@ class Solidification(PhasesAndTemps):
 
     def get_data_for_scheil_plot(self, temp_unit="C") -> pd.DataFrame:
         """Return DataFrame suitable for Scheil plot construction."""
-        phase_region = self.get_temperature_by_phase_region(unit=temp_unit)
-        melted = (
-            phase_region.melt(var_name="Phase Region", value_name=f"Temperature in {temp_unit}")
-            .dropna(subset=[f"Temperature in {temp_unit}"])
-            .sort_values(by=f"Temperature in {temp_unit}")
-            .reset_index(drop=True)
-        )
+        phase_region = self.get_temperature_by_phase_region(unit=temp_unit).drop(['LIQUID'], axis=1)
+        melted = phase_region.replace("None", np.nan).apply(lambda row: row.first_valid_index(), axis=1)
+        result = pd.DataFrame({"Phase Region": melted})
+        temps = self.get_temperatures()
         df = self.get_percent_solidified_molar()
-        return pd.concat([df, melted], axis=1, join="inner")
+        return pd.concat([df, temps, result["Phase Region"]], axis=1, join="inner")
     

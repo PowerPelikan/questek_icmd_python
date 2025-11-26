@@ -3,6 +3,7 @@
 import pandas as pd
 import plotly.express as px
 import numpy as np
+import plotly.graph_objects as go
 from icmdoutput.models.solidification import Solidification
 
 
@@ -76,8 +77,9 @@ class Scheil(Solidification):
         )
         fig.update_traces(line={"width": 3})
         fig.update_layout(font={"size": 16}, title_font={"size": 22})
+        fig.update_legends(traceorder='reversed')
         return fig
-
+    
     # ------------------------------------------------------------------
 
     def _scheil_plot_fig(
