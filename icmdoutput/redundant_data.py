@@ -103,7 +103,7 @@ class PhasesAndTemps(SingleModel):
         if parameter:
             components = self.get_components()
             df_all = []
-            for params, values in zip(components.values.T, phase_values):
+            for params, values in zip(components.values, phase_values):
                 pa_df = pd.DataFrame([params] * len(temps), columns=components.columns)
                 pf_df = pd.DataFrame(values, columns=phases)
                 df = pd.concat([pa_df, temps, pf_df], axis=1)
