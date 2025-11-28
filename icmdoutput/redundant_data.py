@@ -31,11 +31,11 @@ class PhasesAndTemps(SingleModel):
 
         match unit:
             case "C":
-                return [t[0][0] for t in temps]
+                return [t[0] for t in temps[0]]
             case "K":
-                return [t[0][1] for t in temps]
+                return [t[1] for t in temps[0]]
             case "F":
-                return [t[0][2] for t in temps]
+                return [t[2] for t in temps[0]]
             case _:
                 raise ValueError(f"Unknown temperature unit '{unit}'")
 
@@ -107,10 +107,10 @@ class PhasesAndTemps(SingleModel):
 
     def get_phase_fraction(self, phase_unit="mole", temp_unit="C", parameter=False):
         """Return DataFrame with phase fractions."""
-        phase_values = self._get_phase_fraction(phase_unit, parameter)
         #temps = pd.DataFrame(self._get_temperatures(temp_unit), columns=[f"Temperature in {temp_unit}"])
-        temps = self._get_temperatures(temp_unit, parameter)
         phases = self.get_phase_names()
+        temps = self._get_temperatures(temp_unit, parameter)
+        phase_values = self._get_phase_fraction(phase_unit, parameter)
 
         if parameter:
             components = self.get_components()
@@ -123,8 +123,9 @@ class PhasesAndTemps(SingleModel):
                 df_all.append(df)
             return pd.concat(df_all, ignore_index=True)
 
+        temp_df = pd.DataFrame(temps, columns=[f"Temperature in {temp_unit}"])
         phase_df = pd.DataFrame(phase_values, columns=phases)
-        return pd.concat([temps, phase_df], axis=1)
+        return pd.concat([temp_df, phase_df], axis=1)
 
     def get_volume_fraction(self, temp_unit="C", parameter=False):
         """Return DataFrame with volume fractions."""
