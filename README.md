@@ -2,7 +2,7 @@ This repository is under construction
 
 # ICMD Output Data Tools
 
-Utilities for reading, cleaning, and visualizing **ICMD JSON model output** as structured `pandas` DataFrames.  
+Utilities for reading, cleaning, and visualizing **ICMD JSON model output** from [Questek ICMD](https://questek.com/) as structured `pandas` DataFrames.  
 The toolkit streamlines access to thermodynamic, equilibrium, and solidification data for analysis and plotting.
 
 ---
