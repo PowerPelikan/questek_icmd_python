@@ -21,9 +21,49 @@ def make_elem_sliders(comp_cols, comp_array):
         )
     return sliders
 
+def make_phase_slider(phase_cols, phase_df):
+    '''Create selection slider for maximal phase fraction over all phases'''
+
+    sliders = {}
+    for i, c in enumerate(phase_cols):
+        if c == "SOLID" or c == "LIQUID":
+            continue
+        values = sorted(set(phase_df[phase_cols].values[:, i]))
+        sliders[c] = widgets.SelectionSlider(
+            options = values, 
+            value = values[len(values) // 2],
+            description = c,
+            continous_update = True
+        )
+    return sliders
+
+def get_data_slice_from_phase(data_dict, target, phase_cols ,phase_df):
+
+    target /= target.sum()
+
+    X = phase_df[phase_cols].values
+    X = X / X.sum(axis=1, keepdism=True)
+    
+    dist = np.linalg.norm(X - target, axis=1)
+    idx=dist.argmin()
+
+    element_comp = phase_df.loc(idx, phase_df.columns.difference(phase_cols))
+    
+    key = tuple(element_comp.values())
+
+    if key == data_dict:
+        return data_dict[key], element_comp 
+    
+    keys = np.array(list(data_dict.keys()))
+    diffs = np.linalg.norm(keys - np.array(list(key)), axis=1)
+    nearest_key = tuple(keys[np.argmin(diffs)])
+    return data_dict[nearest_key], element_comp 
+
+
 def get_data_slice(data_dict, target):
     '''FInd matching data entry for given composition, handling rounding errors'''
     # Add Al as the remainder to make total = 100
+
     target = {"Al": max(0.0, 100 - sum(target.values())), **target}
     key = tuple(round(float(i), 3) for i in target.values())
 
@@ -151,6 +191,22 @@ def make_interactive_scheil(comp_cols, data_dict, t_col="Temperature in C", soli
         g, target = get_data_slice(data_dict, kwargs)
         with out:
             plot_composition_scheil(g, comp_cols, target, t_col, solid_col, liquid_col)
+
+    interactive = widgets.interactive_output(update_plot, sliders)
+    ui = widgets.VBox([*sliders.values(), out])
+    display(ui, interactive)
+
+def make_interactive_step_byphase(comp_cols, data_dict, phase_cols, phase_df, t_col="Temperature in C", liquid_col="LIQUID"):
+    """Main function combining sliders, plot, and interactivity."""
+    comp_array = np.array(list(data_dict.keys()))
+    sliders = make_elem_sliders(comp_cols, comp_array)
+    out = widgets.Output()
+
+    def update_plot(**kwargs):
+        out.clear_output(wait=True)
+        g, target = get_data_slice_from_phase(data_dict, kwargs, phase_cols, phase_df)
+        with out:
+            plot_composition_step(g, comp_cols, target, t_col, liquid_col)
 
     interactive = widgets.interactive_output(update_plot, sliders)
     ui = widgets.VBox([*sliders.values(), out])
