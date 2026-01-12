@@ -3,7 +3,7 @@ from IPython.display import display
 import numpy as np
 import plotly.graph_objects as go
 
-def make_sliders(comp_cols, comp_array):
+def make_elem_sliders(comp_cols, comp_array):
     '''Create selection sliders for all components except Al'''
 
     #Add fallback for big datasets
@@ -127,7 +127,7 @@ def plot_composition_scheil(g, comp_cols, target, t_col="Temperature in C", soli
 def make_interactive_step(comp_cols, data_dict, t_col="Temperature in C", liquid_col="LIQUID"):
     """Main function combining sliders, plot, and interactivity."""
     comp_array = np.array(list(data_dict.keys()))
-    sliders = make_sliders(comp_cols, comp_array)
+    sliders = make_elem_sliders(comp_cols, comp_array)
     out = widgets.Output()
 
     def update_plot(**kwargs):
@@ -143,7 +143,7 @@ def make_interactive_step(comp_cols, data_dict, t_col="Temperature in C", liquid
 def make_interactive_scheil(comp_cols, data_dict, t_col="Temperature in C", solid_col="SOLID", liquid_col="LIQUID"):
     """Main function combining sliders, plot, and interactivity."""
     comp_array = np.array(list(data_dict.keys()))
-    sliders = make_sliders(comp_cols, comp_array)
+    sliders = make_elem_sliders(comp_cols, comp_array)
     out = widgets.Output()
 
     def update_plot(**kwargs):
